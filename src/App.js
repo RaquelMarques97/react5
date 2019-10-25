@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+import './App.css';
+import GenerateQuote from './GenerateQuote';
+import DisplayQuote from './DisplayQuote';
+
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      // we can set up a sampleQuote as the default
+      // to always display a quote
+      quote: {}, /*or a sampleQuote for static example*/
+      isLoading: true,
+    };
+  }
+
+  getQuote() {
+    // Quote collection via fetch
+    fetch("https://randomuser.me/api?nat=fr")
+      .then(response => response.json())
+      .then(data => {
+        // Once the data is collected, we update our state with the new data
+        this.setState({
+          quote: data.results[0],
+          isLoading: false,
+        });
+      });
+  }
+  render() {
+
+    return (
+      <div className="App">
+        <header className="App-header">
+          <GenerateQuote selectQuote={() => this.getQuote()} />
+          {
+            !this.state.isLoading &&
+            <DisplayQuote quote={this.state.quote} />
+          }
+        </header>
+      </div>
+    );
+  }
 }
+
+
+
+
 
 export default App;
